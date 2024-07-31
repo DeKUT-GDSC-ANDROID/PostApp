@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchPosts() {
-        val apiClient = ApiClient.buildApiClient(PostsApiInterface::class.java)
+        val apiClient = ApiClient.buildApiInterface(PostsApiInterface::class.java)
         val request = apiClient.fetchPosts() // Ensure 'fetchPosts()' is the correct method
         request.enqueue(object : Callback<List<Post>> {
             override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {

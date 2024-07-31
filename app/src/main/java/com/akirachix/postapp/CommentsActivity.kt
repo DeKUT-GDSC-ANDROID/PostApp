@@ -10,54 +10,72 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class CommentsActivity : AppCompatActivity() {
+
+    private var postId: Int = 0
     private lateinit var binding: ActivityCommentsBinding
-    private var postId = 0
-    private lateinit var adapter: AdapterPost
-    private val posts = mutableListOf<Post>() // List to hold posts
+    private val commentsAdapter by lazy { CommentsAdapter(emptyList()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCommentsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        postId = intent.getIntExtra("POST_ID", 0)
+        postId = intent.extras?.getInt("POST_ID") ?: return
 
-        if (postId != 0) {
-            fetchPost()
-        } else {
-            Toast.makeText(this, "Post ID not found", Toast.LENGTH_SHORT).show()
-            finish()
-        }
-
-        // Setup RecyclerView
-        binding.recyclerView1.layoutManager = LinearLayoutManager(this)
-        adapter = AdapterPost(posts, this)
-        binding.recyclerView1.adapter = adapter
+        setupRecyclerView()
+        fetchPost(postId)
+        fetchCommentsByPostID(postId)
     }
 
-    private fun fetchPost() {
-        val apiClient = ApiClient.buildApiClient(PostsApiInterface::class.java)
-        val request = apiClient.fetchPostById(postId)
-        request.enqueue(object : Callback<Post> {
+    private fun setupRecyclerView() {
+        binding.rvComments.layoutManager = LinearLayoutManager(this)
+        binding.rvComments.adapter = commentsAdapter
+    }
+
+    private fun fetchPost(postId: Int) {
+        val apiClient = ApiClient.buildApiInterface(PostsApiInterface::class.java)
+        apiClient.fetchPostById(postId).enqueue(object : Callback<Post> {
             override fun onResponse(call: Call<Post>, response: Response<Post>) {
                 if (response.isSuccessful) {
-                    val post = response.body()
-                    post?.let {
-                        // Clear and add post to the list
-                        posts.clear()
-                        posts.add(it)
-                        adapter.notifyDataSetChanged() // Notify adapter of data change
-                    } ?: run {
-                        Toast.makeText(this@CommentsActivity, "Post not found", Toast.LENGTH_SHORT).show()
-                    }
+                    response.body()?.let { post ->
+                        binding.tvPostTitle.text = post.title
+                        binding.tvPostBody.text = post.body
+                    } ?: showToast("Post not found")
                 } else {
-                    Toast.makeText(this@CommentsActivity, response.errorBody()?.string(), Toast.LENGTH_SHORT).show()
+                    showToast("Error: ${response.message()}")
                 }
             }
 
             override fun onFailure(call: Call<Post>, t: Throwable) {
-                Toast.makeText(this@CommentsActivity, t.message, Toast.LENGTH_SHORT).show()
+                showToast("Failure: ${t.message}")
             }
         })
+    }
+
+    private fun fetchCommentsByPostID(postId: Int) {
+        val apiClient = ApiClient.buildApiInterface(PostsApiInterface::class.java)
+        apiClient.fetchCommentsByPostId(postId).enqueue(object : Callback<List<Comments>> {
+            override fun onResponse(call: Call<List<Comments>>, response: Response<List<Comments>>) {
+                if (response.isSuccessful) {
+                    val comments = response.body() ?: emptyList()
+                    if (comments.isNotEmpty()) {
+                        commentsAdapter.commentsList = comments
+                        commentsAdapter.notifyDataSetChanged()
+                    } else {
+                        showToast("No comments found")
+                    }
+                } else {
+                    showToast("Error: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<Comments>>, t: Throwable) {
+                showToast("Failure: ${t.message}")
+            }
+        })
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }

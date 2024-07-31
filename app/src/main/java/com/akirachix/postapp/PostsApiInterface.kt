@@ -12,4 +12,6 @@ interface PostsApiInterface {
     @GET("/posts/{postId}")
     fun fetchPostById(@Path("postId")postId: Int): Call<Post>
 
+    @GET("post/{postId}/comments")
+    fun fetchCommentsByPostId(@Path("postId") postId: Int): Call<List<Comments>>
 }
