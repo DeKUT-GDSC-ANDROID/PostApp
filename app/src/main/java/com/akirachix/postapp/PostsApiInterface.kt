@@ -6,7 +6,7 @@ import retrofit2.http.Path
 
 interface PostsApiInterface {
     @GET("/posts")
-    fun fetchPosta(): Call<List<Post>>
+    fun fetchPosts(): Call<List<Post>>
 
 
     @GET("/posts/{postId}")
