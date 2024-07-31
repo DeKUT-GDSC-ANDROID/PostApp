@@ -30,9 +30,9 @@ class CommentsActivity : AppCompatActivity() {
         }
 
         // Setup RecyclerView
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView1.layoutManager = LinearLayoutManager(this)
         adapter = AdapterPost(posts, this)
-        binding.recyclerView.adapter = adapter
+        binding.recyclerView1.adapter = adapter
     }
 
     private fun fetchPost() {
