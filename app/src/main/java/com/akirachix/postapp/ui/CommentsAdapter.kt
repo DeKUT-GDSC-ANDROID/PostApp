@@ -1,9 +1,9 @@
-package com.akirachix.postapp
+package com.akirachix.postapp.ui
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.akirachix.postapp.databinding.ActivityCommentsBinding
 import com.akirachix.postapp.databinding.CommentsListItemBinding
+import com.akirachix.postapp.model.Comments
 
 
 class CommentsAdapter(var commentsList: List<Comments>): RecyclerView.Adapter<CommentsAdapter.CommentsViewHolder>() {

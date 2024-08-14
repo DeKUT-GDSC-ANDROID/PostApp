@@ -1,4 +1,4 @@
-package com.akirachix.postapp
+package com.akirachix.postapp.ui
 
 import android.content.Context
 import android.content.Intent
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.akirachix.postapp.databinding.PostItemViewBinding
+import com.akirachix.postapp.model.Post
 
 class AdapterPost(private val posts: List<Post>, private val context: Context) :
     RecyclerView.Adapter<PostViewHolder>() {

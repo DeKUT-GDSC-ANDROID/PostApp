@@ -1,4 +1,4 @@
-package com.akirachix.postapp
+package com.akirachix.postapp.model
 
 import android.icu.text.CaseMap.Title
 
